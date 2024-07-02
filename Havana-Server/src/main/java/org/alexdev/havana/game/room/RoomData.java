@@ -368,6 +368,10 @@ public class RoomData {
         TagDao.addTag(0, this.id, groupId, tag);
     }
 
+    public void removeTags() {
+        TagDao.removeTags(0, this.id, groupId);
+    }
+
     public List<String> getTags() {
         return TagDao.getRoomTags(this.id);
     }
