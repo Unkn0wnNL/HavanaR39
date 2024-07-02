@@ -27,19 +27,19 @@ public class ROOM_TOOL extends MessageComposer {
         for (String tag : room.getData().getTags()) {
             response.writeString(tag);
         }
-        if (EventsManager.getInstance().hasEvent(room.getId())) {
-            response.writeBool(true);
-            Event event = EventsManager.getInstance().getEventByRoomId(room.getId());
+
+        Event event = EventsManager.getInstance().getEventByRoomId(room.getId());
+        response.writeBool(event != null);
+        if(event != null) {
             response.writeString(event.getName());
             response.writeString(event.getDescription());
-            response.writeString(event.getTags().size());
+            response.writeInt(event.getTags().size());
             event.getTags().forEach(response::writeString);
         }
-        response.writeBool(false);
     }
 
     @Override
     public short getHeader() {
-        return 538; //
+        return 538;
     }
 }
