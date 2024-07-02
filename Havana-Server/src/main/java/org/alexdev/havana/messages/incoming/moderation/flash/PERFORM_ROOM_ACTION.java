@@ -1,5 +1,7 @@
 package org.alexdev.havana.messages.incoming.moderation.flash;
 
+import org.alexdev.havana.game.events.Event;
+import org.alexdev.havana.game.events.EventsManager;
 import org.alexdev.havana.game.fuserights.Fuseright;
 import org.alexdev.havana.game.player.Player;
 import org.alexdev.havana.game.room.Room;
@@ -35,6 +37,12 @@ public class PERFORM_ROOM_ACTION implements MessageEvent {
 
         if (inappropriateName) {
             room.getData().setName("Inappropriate to hotel management");
+            room.getData().setDescription("");
+            room.getData().removeTags();
+            Event event = EventsManager.getInstance().getEventByRoomId(roomId);
+            if (event != null) {
+                EventsManager.getInstance().removeEvent(event);
+            }
         }
 
         if (kickAllUsers) {
