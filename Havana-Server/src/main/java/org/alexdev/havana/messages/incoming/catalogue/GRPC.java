@@ -235,7 +235,7 @@ public class GRPC implements MessageEvent {
 
         if (pricePixels > 0) {
             CurrencyDao.decreasePixels(player.getDetails(), pricePixels);
-            player.send(new ActivityPointNotification(player.getDetails().getPixels(), ActivityPointNotification.ActivityPointAlertType.PIXELS_SOUND));
+            player.send(new ActivityPointNotification(player.getDetails().getPixels(), 0));
         }
 
         String transactionDscription = getTransactionDescription(item);

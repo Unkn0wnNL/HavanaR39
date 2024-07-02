@@ -11,7 +11,7 @@ public class GET_CREDITS implements MessageEvent {
     @Override
     public void handle(Player player, NettyRequest reader) throws Exception {
         player.send(new CREDIT_BALANCE(player.getDetails().getCredits()));
-        player.send(new ActivityPointNotification(player.getDetails().getPixels(), ActivityPointNotification.ActivityPointAlertType.NO_SOUND));
+        player.send(new ActivityPointNotification(player.getDetails().getPixels(), 0));
 
         /*if (DateUtil.getCurrentTimeSeconds() > (player.getDetails().getLastPixelsTime() + TimeUnit.MINUTES.toSeconds(15))) {
             player.getDetails().setLastPixelsTime(DateUtil.getCurrentTimeSeconds() + TimeUnit.MINUTES.toSeconds(15));

@@ -4,35 +4,19 @@ import org.alexdev.havana.messages.types.MessageComposer;
 import org.alexdev.havana.server.netty.streams.NettyResponse;
 
 public class ActivityPointNotification extends MessageComposer {
-    public enum ActivityPointAlertType {
-        PIXELS_RECEIVED,
-        PIXELS_SOUND,
-        NO_SOUND,
-    }
-
     private final int pixels;
-    private final ActivityPointAlertType alertType;
+    private final int receivedPixels;
 
-    public ActivityPointNotification(int pixels, ActivityPointAlertType alertType) {
+    public ActivityPointNotification(int pixels, int receivedPixels) {
         this.pixels = pixels;
-        this.alertType = alertType;
+        this.receivedPixels = receivedPixels;
     }
 
     @Override
     public void compose(NettyResponse response) {
         response.writeInt(this.pixels);
+        response.writeInt(this.receivedPixels);
 
-        if (this.alertType == ActivityPointAlertType.PIXELS_RECEIVED) {
-            response.writeInt(15);
-        }
-
-        if (this.alertType == ActivityPointAlertType.PIXELS_SOUND) {
-            response.writeInt(-1);
-        }
-
-        if (this.alertType == ActivityPointAlertType.NO_SOUND) {
-            response.writeInt(0);
-        }
     }
 
     @Override

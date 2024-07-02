@@ -193,7 +193,7 @@ public class GameScheduler implements Runnable {
                 for (var kvp : pixelHandout) {
                     var p = kvp.getKey();
                     //p.send(new ActivityPointNotification(p.getDetails().getPixels(), ActivityPointNotification.ActivityPointAlertType.PIXELS_SOUND)); // Alert pixel sound
-                    p.send(new ActivityPointNotification(p.getDetails().getPixels(), ActivityPointNotification.ActivityPointAlertType.PIXELS_RECEIVED)); // Alert pixels received
+                    p.send(new ActivityPointNotification(p.getDetails().getPixels(), kvp.getValue())); // Alert pixels received
                 }
             }
             //}

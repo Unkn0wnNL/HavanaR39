@@ -1,7 +1,6 @@
 package org.alexdev.havana.dao.mysql;
 
 import org.alexdev.havana.dao.Storage;
-import org.alexdev.havana.game.games.player.GameRank;
 import org.alexdev.havana.game.player.PlayerDetails;
 
 import java.sql.Connection;
@@ -9,9 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 public class CurrencyDao {
 
@@ -190,11 +189,13 @@ public class CurrencyDao {
      *
      * @param details the player details
      */
-    public static void increaseCredits(PlayerDetails details, int amount) {
+    public static Integer increaseCredits(PlayerDetails details, int amount) {
         Connection conn = null;
         PreparedStatement updateQuery = null;
         PreparedStatement fetchQuery = null;
         ResultSet row = null;
+
+        int totalAmount = 0;
 
         try {
             conn = Storage.getStorage().getConnection();
@@ -220,6 +221,7 @@ public class CurrencyDao {
             if (row != null && row.next()) {
                 int updatedAmount = row.getInt("credits");
                 details.setCredits(updatedAmount);
+                totalAmount += updatedAmount;
             }
 
         } catch (Exception e) {
@@ -243,6 +245,7 @@ public class CurrencyDao {
             Storage.closeSilently(fetchQuery);
             Storage.closeSilently(conn);
         }
+        return totalAmount;
     }
 
     /**
@@ -388,11 +391,12 @@ public class CurrencyDao {
      *
      * @param details the player details
      */
-    public static void increasePixels(PlayerDetails details, int amount) {
+    public static Integer increasePixels(PlayerDetails details, int amount) {
         Connection conn = null;
         PreparedStatement updateQuery = null;
         PreparedStatement fetchQuery = null;
         ResultSet row = null;
+        int totalAmount = 0;
 
         try {
             conn = Storage.getStorage().getConnection();
@@ -418,6 +422,7 @@ public class CurrencyDao {
             if (row != null && row.next()) {
                 int updatedAmount = row.getInt("pixels");
                 details.setPixels(updatedAmount);
+                totalAmount += updatedAmount;
             }
 
         } catch (Exception e) {
@@ -441,6 +446,7 @@ public class CurrencyDao {
             Storage.closeSilently(fetchQuery);
             Storage.closeSilently(conn);
         }
+        return totalAmount;
     }
 
     /**

@@ -19,12 +19,11 @@ import org.alexdev.havana.game.groups.GroupMemberRank;
 import org.alexdev.havana.game.guides.GuideManager;
 import org.alexdev.havana.game.inventory.FlashInventory;
 import org.alexdev.havana.game.inventory.Inventory;
-import org.alexdev.havana.game.item.ItemManager;
 import org.alexdev.havana.game.messenger.Messenger;
+import org.alexdev.havana.game.moderation.cfh.CallForHelpManager;
 import org.alexdev.havana.game.player.guides.PlayerGuideManager;
 import org.alexdev.havana.game.player.statistics.PlayerStatistic;
 import org.alexdev.havana.game.player.statistics.PlayerStatisticManager;
-import org.alexdev.havana.game.room.RoomManager;
 import org.alexdev.havana.game.room.entities.RoomPlayer;
 import org.alexdev.havana.messages.incoming.club.SCR_GIFT_APPROVAL;
 import org.alexdev.havana.messages.outgoing.alerts.ALERT;
@@ -33,6 +32,7 @@ import org.alexdev.havana.messages.outgoing.alerts.HOTEL_LOGOUT.LogoutReason;
 import org.alexdev.havana.messages.outgoing.club.CLUB_GIFT;
 import org.alexdev.havana.messages.outgoing.effects.AVATAR_EFFECTS;
 import org.alexdev.havana.messages.outgoing.handshake.*;
+import org.alexdev.havana.messages.outgoing.moderation.flash.INIT_MOD_TOOL_ROOM;
 import org.alexdev.havana.messages.outgoing.openinghours.INFO_HOTEL_CLOSING;
 import org.alexdev.havana.messages.outgoing.user.settings.HELP_ITEMS;
 import org.alexdev.havana.messages.types.MessageComposer;
@@ -43,17 +43,14 @@ import org.alexdev.havana.util.config.GameConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.Inet4Address;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
-import static java.util.Map.entry;
 
 public class Player extends Entity {
     public static final AttributeKey<Player> PLAYER_KEY = AttributeKey.valueOf("Player");
@@ -140,7 +137,7 @@ public class Player extends Entity {
         }
 
         this.messenger = new Messenger(this);
-        if(this.flash) {
+        if (this.flash) {
             this.inventory = new FlashInventory(this, 100000);
         } else {
             this.inventory = new Inventory(this, 9);
@@ -154,7 +151,7 @@ public class Player extends Entity {
 
         if (this.details.getMachineId() == null || this.details.getMachineId().isBlank() || !(
                 this.details.getMachineId().length() == 33 &&
-                this.details.getMachineId().startsWith("#"))) {
+                        this.details.getMachineId().startsWith("#"))) {
             this.details.setMachineId(this.network.getClientMachineId());
             this.network.setSaveMachineId(true);
             PlayerDao.setMachineId(this.details.getId(), this.details.getMachineId());
@@ -215,13 +212,13 @@ public class Player extends Entity {
 
         this.send(new RIGHTS(this.getFuserights()));
 
-        if(this.flash) {
+        if (this.flash) {
             this.send(new UNKNOWN_290_FLASH());
         }
 
         this.send(new LOGIN());
 
-        if(this.flash) {
+        if (this.flash) {
             this.send(new RoomInfoFeed_517_FLASH());
 
             var homeRoom = PlayerDao.getHomeRoom(this.getDetails().getId());
@@ -325,9 +322,14 @@ public class Player extends Entity {
 
         ClubSubscription.countMemberDays(this);
 
-        if(this.flash) {
+        if (this.flash) {
             try {
                 new SCR_GIFT_APPROVAL().handle(this, null);
+
+                if (this.hasFuse(Fuseright.RECEIVE_CALLS_FOR_HELP)) {
+                    this.send(new INIT_MOD_TOOL_ROOM(this));
+                    CallForHelpManager.getInstance().sendCfhsToMod(this);
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -339,7 +341,7 @@ public class Player extends Entity {
         var errorAlert = "We could not find an appropriate country badge in our database. Please contact staff";
 
         try {
-            var address = ((InetSocketAddress)network.getChannel().remoteAddress()).getAddress().getHostAddress();
+            var address = ((InetSocketAddress) network.getChannel().remoteAddress()).getAddress().getHostAddress();
 
             URL url = new URL("http://ip-api.com/json/" + address);
 
@@ -347,7 +349,7 @@ public class Player extends Entity {
             conn.setRequestMethod("GET");
             int responseCode = conn.getResponseCode();
 
-            if(responseCode != 200) {
+            if (responseCode != 200) {
                 this.send(new ALERT(errorAlert));
                 return;
             }
@@ -368,7 +370,7 @@ public class Player extends Entity {
 
             var badge = CountryDao.getCountryBadge(countryName);
 
-            if(badge != null && !this.badgeManager.hasBadge(badge)) {
+            if (badge != null && !this.badgeManager.hasBadge(badge)) {
                 this.countryBadgeToGive = badge;
             }
         } catch (Exception e) {
@@ -404,7 +406,7 @@ public class Player extends Entity {
 
             this.statisticManager.reload();
 
-            if(this.flash) {
+            if (this.flash) {
                 try {
                     new SCR_GIFT_APPROVAL().handle(this, null);
                 } catch (Exception e) {
@@ -686,6 +688,7 @@ public class Player extends Entity {
 
     /**
      * Get whether we are processing login steps
+     *
      * @return true, if successful
      */
     public boolean isProcessLoginSteps() {
@@ -694,6 +697,7 @@ public class Player extends Entity {
 
     /**
      * Set whether we are processing login steps
+     *
      * @param processLoginSteps the flag if we are or not
      */
     public void setProcessLoginSteps(boolean processLoginSteps) {
@@ -718,6 +722,7 @@ public class Player extends Entity {
 
     /**
      * Get the joined group
+     *
      * @param joinedGroupId the joined group id
      * @return the group
      */

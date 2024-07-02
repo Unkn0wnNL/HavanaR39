@@ -51,7 +51,7 @@ public class AchievementManager {
 
         if (userAchievement.getAchievementInfo().getPixelReward() > 0) {
             CurrencyDao.increasePixels(player.getDetails(), userAchievement.getAchievementInfo().getPixelReward());
-            player.send(new ActivityPointNotification(player.getDetails().getPixels(), ActivityPointNotification.ActivityPointAlertType.PIXELS_SOUND)); // Alert pixel sound
+            player.send(new ActivityPointNotification(player.getDetails().getPixels(), userAchievement.getAchievementInfo().getPixelReward())); // Alert pixel sound
         }
 
         if (userAchievement.getAchievementInfo().getCoinsReward() > 0) {

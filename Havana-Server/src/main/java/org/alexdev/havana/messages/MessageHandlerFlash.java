@@ -4,24 +4,18 @@
 
 package org.alexdev.havana.messages;
 
-import org.alexdev.havana.game.player.Player;
-import org.alexdev.havana.game.room.Room;
 import org.alexdev.havana.messages.incoming.TRYFLAT_FLASH;
 import org.alexdev.havana.messages.incoming.handshake.HOMEROOM_FLASH;
 import org.alexdev.havana.messages.incoming.handshake.INIT_CRYPTO_FLASH;
 import org.alexdev.havana.messages.incoming.handshake.SSO;
 import org.alexdev.havana.messages.incoming.inventory.GETSTRIP;
+import org.alexdev.havana.messages.incoming.moderation.flash.*;
 import org.alexdev.havana.messages.incoming.navigator.*;
 import org.alexdev.havana.messages.incoming.rooms.*;
 import org.alexdev.havana.messages.incoming.user.AVATAR_SAVE_FLASH;
 import org.alexdev.havana.messages.incoming.user.GET_WARDROBE_FLASH;
 import org.alexdev.havana.messages.incoming.user.badges.GETSELECTEDBADGES;
-import org.alexdev.havana.messages.outgoing.rooms.groups.GROUP_BADGES;
-import org.alexdev.havana.messages.outgoing.rooms.groups.GROUP_INFO;
 import org.alexdev.havana.messages.outgoing.rooms.user.SAVE_WARDROBE_OUTFIT_FLASH;
-import org.alexdev.havana.messages.outgoing.user.badges.USERBADGE_FLASH;
-
-import java.util.HashMap;
 
 public class MessageHandlerFlash extends MessageHandler {
 
@@ -66,5 +60,17 @@ public class MessageHandlerFlash extends MessageHandler {
         registerEvent(388, new GETPUBLICSPACE_FLASH());
         registerEvent(386, new ROOM_EDIT_SAVE_ICON_FLASH());
         registerEvent(376, new SAVE_WARDROBE_OUTFIT_FLASH());
+        registerEvent(459, new GET_ROOM_TOOL());
+        registerEvent(460, new PERFORM_ROOM_ACTION());
+        registerEvent(461, new SEND_ALERT());
+        registerEvent(462, new SEND_ALERT());
+        registerEvent(454, new GET_USER_INFO());
+        registerEvent(200, new ROOM_ALERT());
+        registerEvent(455, new GET_PLAYER_CHAT_LOGS());
+        registerEvent(456, new GET_ROOM_CHAT_LOGS());
+        registerEvent(453, new SUBMIT_CFH());
+        registerEvent(450, new PICK_CFH());
+        registerEvent(451, new RELEASE_CFH());
+        registerEvent(452, new CLOSE_CFH());
     }
 }

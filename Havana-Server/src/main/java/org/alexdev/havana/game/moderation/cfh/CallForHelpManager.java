@@ -5,27 +5,48 @@ import org.alexdev.havana.game.player.Player;
 import org.alexdev.havana.game.player.PlayerManager;
 import org.alexdev.havana.game.room.Room;
 import org.alexdev.havana.messages.outgoing.moderation.CALL_FOR_HELP;
+import org.alexdev.havana.messages.outgoing.moderation.CRY_RECEIVED;
 import org.alexdev.havana.messages.outgoing.moderation.DELETE_CRY;
 import org.alexdev.havana.messages.outgoing.moderation.PICKED_CRY;
-import org.alexdev.havana.messages.outgoing.moderation.CRY_RECEIVED;
+import org.alexdev.havana.messages.outgoing.moderation.flash.CALL_FOR_HELP_FLASH;
 import org.alexdev.havana.messages.types.MessageComposer;
 import org.alexdev.havana.util.DateUtil;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class CallForHelpManager {
     private static CallForHelpManager instance;
-    private Map<Integer, CallForHelp> callsForHelp;
-    private AtomicInteger latestCallId;
+    private final Map<Integer, CallForHelp> callsForHelp;
+    private final AtomicInteger latestCallId;
 
     public CallForHelpManager() {
         this.callsForHelp = new ConcurrentHashMap<>();
         this.latestCallId = new AtomicInteger();
+    }
+
+
+    /**
+     * Add Call for Help to queue
+     *
+     * @param caller  The person submitting the CFH
+     * @param message The message attached to the CFH
+     */
+    public void submitCall(Player caller, int category, int reportedUser, Room room, String message) {
+        Date timestamp = new Date();
+        int callId = this.latestCallId.getAndIncrement();
+        int callerId = caller.getDetails().getId();
+
+        CallForHelp cfh = new CallForHelp(callId, callerId, room, message);
+        this.callsForHelp.put(callId, cfh);
+
+        sendToModerators(new CALL_FOR_HELP(cfh));
+        sendToModerators(new CALL_FOR_HELP_FLASH(cfh));
+        caller.send(new CRY_RECEIVED());
     }
 
     /**
@@ -43,6 +64,7 @@ public class CallForHelpManager {
         this.callsForHelp.put(callId, cfh);
 
         sendToModerators(new CALL_FOR_HELP(cfh));
+        sendToModerators(new CALL_FOR_HELP_FLASH(cfh));
         caller.send(new CRY_RECEIVED());
     }
 
@@ -98,7 +120,7 @@ public class CallForHelpManager {
     /**
      * Pick up a call for help
      *
-     * @param cfh the CFH to pick up
+     * @param cfh       the CFH to pick up
      * @param moderator the moderator who is picking it up
      */
     public void pickUp(CallForHelp cfh, Player moderator) {
@@ -111,7 +133,7 @@ public class CallForHelpManager {
     /**
      * Chnage catgeory of Call
      *
-     * @param cfh the CFH to change
+     * @param cfh         the CFH to change
      * @param newCategory the new category
      */
     public void changeCategory(CallForHelp cfh, int newCategory) {
@@ -121,6 +143,7 @@ public class CallForHelpManager {
 
         cfh.updateCategory(newCategory);
         sendToModerators(new CALL_FOR_HELP(cfh));
+        sendToModerators(new CALL_FOR_HELP_FLASH(cfh));
     }
 
     /**
@@ -139,12 +162,26 @@ public class CallForHelpManager {
     public void purgeExpiredCfh() {
         Predicate<CallForHelp> filter = cfh -> !cfh.isOpen() || DateUtil.getCurrentTimeSeconds() > cfh.getExpireTime();
 
-        this.callsForHelp.values().stream().filter(filter).collect(Collectors.toList()).forEach(x -> {
+        this.callsForHelp.values().stream().filter(filter).toList().forEach(x -> {
             sendToModerators(new DELETE_CRY(x.getCryId()));
         });
 
         this.callsForHelp.values().removeIf(filter);
 
+    }
+
+    public void sendCfhsToMod(Player player) {
+        Predicate<CallForHelp> filter = cfh -> DateUtil.getCurrentTimeSeconds() < cfh.getExpireTime();
+        this.callsForHelp.values().stream().filter(filter).toList().forEach(x -> {
+            player.send(new CALL_FOR_HELP_FLASH(x));
+        });
+    }
+
+    public void sendCfhsToMods() {
+        Predicate<CallForHelp> filter = cfh -> DateUtil.getCurrentTimeSeconds() < cfh.getExpireTime();
+        this.callsForHelp.values().stream().filter(filter).toList().forEach(x -> {
+            sendToModerators(new CALL_FOR_HELP_FLASH(x));
+        });
     }
 
     /**

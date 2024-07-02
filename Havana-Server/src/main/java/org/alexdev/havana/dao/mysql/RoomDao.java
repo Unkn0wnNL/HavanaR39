@@ -629,7 +629,7 @@ public class RoomDao {
             preparedStatement = Storage.getStorage().prepare("SELECT rooms.owner_id AS owner_id, room_chatlogs.*,rooms.name AS room_name, users.username AS username FROM room_chatlogs " +
                     "INNER JOIN rooms ON room_chatlogs.room_id = rooms.id " +
                     "INNER JOIN users ON room_chatlogs.user_id = users.id " +
-                    "WHERE room_id = ? " +
+                    "WHERE room_id = ? AND FROM_UNIXTIME(`timestamp`,'%Y-%m-%d') = CURDATE() " +
                     "ORDER BY timestamp DESC " +
                     "LIMIT 150", sqlConnection);
             preparedStatement.setInt(1, roomId);

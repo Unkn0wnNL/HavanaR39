@@ -1,7 +1,10 @@
 package org.alexdev.havana.game.commands;
 
 import org.alexdev.havana.game.commands.registered.*;
-import org.alexdev.havana.game.commands.registered.admin.*;
+import org.alexdev.havana.game.commands.registered.admin.BotCommand;
+import org.alexdev.havana.game.commands.registered.admin.ItemDebugCommand;
+import org.alexdev.havana.game.commands.registered.admin.PacketTestCommand;
+import org.alexdev.havana.game.commands.registered.admin.RecoverAccountCommand;
 import org.alexdev.havana.game.commands.registered.groups.*;
 import org.alexdev.havana.game.commands.registered.moderation.*;
 import org.alexdev.havana.game.entity.Entity;
@@ -73,12 +76,14 @@ public class CommandManager {
         tempCommands.put(new String[] { "bot" }, new BotCommand());
         tempCommands.put(new String[] { "headrotate", "hr" }, new HeadRotateCommand());
         tempCommands.put(new String[] { "teleport", "tele", "telep", "tp" }, new TeleportCommand());
-        tempCommands.put(new String[] { "addcredits", "givecredits" }, new GiveCreditsCommand());
-        tempCommands.put(new String[] { "removecredits", "delcredits" }, new RemoveCreditsCommand());
+        tempCommands.put(new String[]{"addcredits", "givecredits"}, new GiveCreditsCommand());
+        tempCommands.put(new String[]{"addpixels", "givepixels"}, new GivePixelsCommand());
+        tempCommands.put(new String[]{"removecredits", "delcredits"}, new RemoveCreditsCommand());
         tempCommands.put(new String[] { "checkbalance", "balance" }, new CheckCreditsCommand());
         tempCommands.put(new String[] { "resetpw" }, new RecoverAccountCommand());
         tempCommands.put(new String[] { "unacceptable" }, new UnacceptableCommand());
-        tempCommands.put(new String[] { "giftroom" }, new GiftRoomCommand());
+        tempCommands.put(new String[]{"giftroom"}, new GiftRoomCommand());
+        tempCommands.put(new String[]{"seteffect"}, new SetEffectCommand());
 
         // Moderation
         tempCommands.put(new String[] { "dc", "disconnect" }, new DisconnectUserCommand());

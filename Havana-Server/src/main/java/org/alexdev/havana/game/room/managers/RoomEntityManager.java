@@ -1,11 +1,10 @@
 package org.alexdev.havana.game.room.managers;
 
-import org.alexdev.havana.dao.mysql.*;
+import org.alexdev.havana.dao.mysql.ItemDao;
+import org.alexdev.havana.dao.mysql.RoomDao;
+import org.alexdev.havana.dao.mysql.RoomRightsDao;
+import org.alexdev.havana.dao.mysql.RoomVoteDao;
 import org.alexdev.havana.game.GameScheduler;
-import org.alexdev.havana.game.achievements.AchievementManager;
-import org.alexdev.havana.game.achievements.user.UserAchievement;
-import org.alexdev.havana.game.bot.Bot;
-import org.alexdev.havana.game.bot.BotData;
 import org.alexdev.havana.game.bot.BotManager;
 import org.alexdev.havana.game.entity.Entity;
 import org.alexdev.havana.game.entity.EntityType;
@@ -16,7 +15,6 @@ import org.alexdev.havana.game.games.wobblesquabble.WobbleSquabblePlayer;
 import org.alexdev.havana.game.item.Item;
 import org.alexdev.havana.game.item.interactors.types.TeleportInteractor;
 import org.alexdev.havana.game.item.publicrooms.PublicItemParser;
-import org.alexdev.havana.game.misc.figure.FigureManager;
 import org.alexdev.havana.game.pathfinder.Position;
 import org.alexdev.havana.game.player.Player;
 import org.alexdev.havana.game.room.Room;
@@ -29,15 +27,9 @@ import org.alexdev.havana.messages.outgoing.rooms.UPDATE_VOTES;
 import org.alexdev.havana.messages.outgoing.rooms.user.HOTEL_VIEW;
 import org.alexdev.havana.messages.outgoing.rooms.user.LOGOUT;
 import org.alexdev.havana.messages.outgoing.rooms.user.USER_OBJECTS;
-import org.alexdev.havana.util.FigureUtil;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 

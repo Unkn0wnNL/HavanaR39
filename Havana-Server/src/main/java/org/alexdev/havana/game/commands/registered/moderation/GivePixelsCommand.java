@@ -11,10 +11,10 @@ import org.alexdev.havana.game.player.PlayerManager;
 import org.alexdev.havana.game.player.PlayerRank;
 import org.alexdev.havana.messages.outgoing.rooms.user.CHAT_MESSAGE;
 import org.alexdev.havana.messages.outgoing.rooms.user.CHAT_MESSAGE.ChatMessageType;
-import org.alexdev.havana.messages.outgoing.user.currencies.CREDIT_BALANCE;
+import org.alexdev.havana.messages.outgoing.user.currencies.ActivityPointNotification;
 import org.apache.commons.lang3.StringUtils;
 
-public class GiveCreditsCommand extends Command {
+public class GivePixelsCommand extends Command {
     @Override
     public void setPlayerRank() {
         super.setPlayerRank(PlayerRank.COMMUNITY_MANAGER);
@@ -23,7 +23,7 @@ public class GiveCreditsCommand extends Command {
     @Override
     public void addArguments() {
         this.arguments.add("user");
-        this.arguments.add("credits");
+        this.arguments.add("pixels");
     }
 
     @Override
@@ -60,14 +60,14 @@ public class GiveCreditsCommand extends Command {
 
         int amount = Integer.parseInt(args[1]);
 
-        int totalAmount = CurrencyDao.increaseCredits(targetUser, amount);
+        int totalAmount = CurrencyDao.increasePixels(targetUser, amount);
         var user = PlayerManager.getInstance().getPlayerById(targetUser.getId());
 
         if (user != null) {
-            user.send(new CREDIT_BALANCE(totalAmount));
+            user.send(new ActivityPointNotification(totalAmount, amount));
         }
 
-        player.send(new CHAT_MESSAGE(ChatMessageType.WHISPER, player.getRoomUser().getInstanceId(), amount + " credits added to user " + targetUser.getName(), 0));
+        player.send(new CHAT_MESSAGE(ChatMessageType.WHISPER, player.getRoomUser().getInstanceId(), amount + " pixels added to user " + targetUser.getName(), 0));
     }
 
     @Override

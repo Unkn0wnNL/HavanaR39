@@ -44,7 +44,7 @@ public class PURCHASE_AND_WEAR implements MessageEvent {
 
         if (pricePixels > 0) {
             CurrencyDao.decreasePixels(player.getDetails(), pricePixels);
-            player.send(new ActivityPointNotification(player.getDetails().getPixels(), ActivityPointNotification.ActivityPointAlertType.PIXELS_SOUND));
+            player.send(new ActivityPointNotification(player.getDetails().getPixels(), 0));
         }
 
         ACTIVATE_AVATAR_EFFECT.doAction(player, Integer.parseInt(item.getItemSpecialId()));

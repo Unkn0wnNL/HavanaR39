@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.alexdev.havana.game.player.Player;
 import org.alexdev.havana.game.room.Room;
-import org.alexdev.havana.game.room.RoomManager;
 import org.alexdev.havana.log.Log;
 import org.alexdev.havana.messages.incoming.catalogue.GET_ALIAS_LIST;
 import org.alexdev.havana.messages.incoming.catalogue.GET_CATALOGUE_PAGE;
