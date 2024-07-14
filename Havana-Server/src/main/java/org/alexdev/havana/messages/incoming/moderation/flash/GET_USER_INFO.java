@@ -20,7 +20,7 @@ public class GET_USER_INFO implements MessageEvent {
 
         PlayerDetails target = PlayerManager.getInstance().getPlayerData(userId);
         if (target == null) {
-            player.send(new ALERT("Target not found or player is offline"));
+            player.send(new ALERT("Target not found"));
         } else {
             player.send(new MOD_TOOL_USER_INFO(target));
         }

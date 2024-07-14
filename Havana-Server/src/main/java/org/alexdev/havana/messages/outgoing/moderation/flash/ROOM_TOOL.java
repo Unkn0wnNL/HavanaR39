@@ -17,7 +17,7 @@ public class ROOM_TOOL extends MessageComposer {
     public void compose(NettyResponse response) {
         response.writeInt(room.getId());
         response.writeInt(room.getData().getVisitorsNow()); // user count
-        response.writeBool(room.getEntityManager().getPlayers().stream().anyMatch((player -> player.getDetails().getId() == room.getData().getId())));
+        response.writeBool(room.getEntityManager().getPlayers().stream().anyMatch((player -> player.getDetails().getId() == room.getData().getOwnerId())));
         response.writeInt(room.getData().getOwnerId());
         response.writeString(room.getData().getOwnerName());
         response.writeInt(room.getData().getId());

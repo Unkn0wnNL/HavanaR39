@@ -72,5 +72,6 @@ public class MessageHandlerFlash extends MessageHandler {
         registerEvent(450, new PICK_CFH());
         registerEvent(451, new RELEASE_CFH());
         registerEvent(452, new CLOSE_CFH());
+        registerEvent(458, new GET_ROOM_VISITS());
     }
 }
